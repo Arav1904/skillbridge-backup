@@ -22,8 +22,8 @@ def get_one_role(role_id: int, db: Session = Depends(get_db), _: User = Depends(
 
 
 @router.post("/", response_model=RoleResponse, status_code=201)
-def create_new_role(data: RoleCreate, db: Session = Depends(get_db)):
-    # Auth-free during initial setup — protect with require_admin after seeding if desired
+def create_new_role(data: RoleCreate, db: Session = Depends(get_db),
+                    _: User = Depends(require_admin)):
     return create_role(db, data)
 
 
