@@ -33,7 +33,7 @@ const testimonials = [
 
 export default function Landing() {
   const [courses, setCourses] = useState([]);
-  const [categories, setCategories] = useState({});
+  const [categoryMap, setCategoryMap] = useState({});
   const [visibleSections, setVisibleSections] = useState({});
   const sectionRefs = useRef({});
 
@@ -47,7 +47,7 @@ export default function Landing() {
         setCourses(cRes.data);
         const catMap = {};
         catRes.data.forEach(c => { catMap[c.category_id] = c.category_name; });
-        setCategories(catMap);
+        setCategoryMap(catMap);
       } catch {}
     };
     loadData();
@@ -177,7 +177,7 @@ export default function Landing() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.slice(0, 6).map((course, i) => (
                 <div key={course.course_id} className="animate-fade-up opacity-0" style={{animationDelay:`${i*80}ms`,animationFillMode:'forwards'}}>
-                  <CourseCard course={course} index={i} categoryName={categories[course.category_id]} />
+                  <CourseCard course={course} index={i} categoryName={categoryMap[course.category_id]} />
                 </div>
               ))}
             </div>
