@@ -1,5 +1,6 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "builds": [
     {
       "src": "frontend/package.json",
@@ -11,6 +12,10 @@
     { "src": "/api/(.*)", "dest": "http://localhost:8000/api/$1" },
     { "src": "/[^.]*", "dest": "/index.html" }
   ],
+=======
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+>>>>>>> 5cd5d6beae17ad720f053d74e07a879305d16f8f
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

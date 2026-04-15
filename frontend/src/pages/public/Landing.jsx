@@ -33,11 +33,24 @@ const testimonialsList = [
 
 export default function Landing() {
   const [courses, setCourses] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({});
   const [visibleSections, setVisibleSections] = useState({});
   const sectionRefs = useRef({});
 
   useEffect(() => {
-    api.get('/courses/?limit=6').then(r => setCourses(r.data)).catch(() => {});
+    const loadData = async () => {
+      try {
+        const [cRes, catRes] = await Promise.all([
+          api.get('/courses/?limit=6'),
+          api.get('/categories/?limit=100'),
+        ]);
+        setCourses(cRes.data);
+        const catMap = {};
+        catRes.data.forEach(c => { catMap[c.category_id] = c.category_name; });
+        setCategoryMap(catMap);
+      } catch {}
+    };
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -158,8 +171,13 @@ export default function Landing() {
           {courses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.slice(0, 6).map((course, i) => (
+<<<<<<< HEAD
                 <div key={course.course_id} className="animate-fade-up" style={{animationDelay:`${i*80}ms`}}>
                   <CourseCard course={course} index={i} />
+=======
+                <div key={course.course_id} className="animate-fade-up opacity-0" style={{animationDelay:`${i*80}ms`,animationFillMode:'forwards'}}>
+                  <CourseCard course={course} index={i} categoryName={categoryMap[course.category_id]} />
+>>>>>>> 5cd5d6beae17ad720f053d74e07a879305d16f8f
                 </div>
               ))}
             </div>

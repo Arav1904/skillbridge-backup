@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { BookOpen, ArrowLeft, Save, AlertCircle, CheckCircle, Clock, Tag, AlignLeft, Layers } from 'lucide-react';
+import { BookOpen, ArrowLeft, Save, AlertCircle, Clock, Tag, AlignLeft, Layers } from 'lucide-react';
 import api from '../../api';
 import { useToast } from '../../components/Toast';
+import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 const levels = ['Beginner', 'Intermediate', 'Advanced'];
@@ -12,11 +13,21 @@ export default function CreateCourse() {
   const isEdit = Boolean(courseId);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const [form, setForm] = useState({ course_title: '', description: '', duration: '', category_id: '', instructor_id: '', level: 'Beginner' });
+  const [form, setForm] = useState({
+    course_title: '', description: '', duration: '',
+    category_id: '', level: 'Beginner',
+  });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [fetchingCourse, setFetchingCourse] = useState(isEdit);
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories for the dropdown
+  useEffect(() => {
+    api.get('/categories/?limit=100').then(r => setCategories(r.data)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -28,7 +39,6 @@ export default function CreateCourse() {
           description: c.description || '',
           duration: c.duration?.toString() || '',
           category_id: c.category_id?.toString() || '',
-          instructor_id: c.instructor_id?.toString() || '',
           level: c.level || 'Beginner',
         });
       })
@@ -56,7 +66,7 @@ export default function CreateCourse() {
       description: form.description.trim() || null,
       duration: form.duration ? parseInt(form.duration) : null,
       category_id: form.category_id ? parseInt(form.category_id) : null,
-      instructor_id: form.instructor_id ? parseInt(form.instructor_id) : null,
+      instructor_id: user?.user_id || null,
       level: form.level,
     };
     try {
@@ -100,7 +110,7 @@ export default function CreateCourse() {
             <input type="text" value={form.course_title} onChange={e => set('course_title', e.target.value)}
               placeholder="e.g. Complete Python Bootcamp" className={`input-field pl-10 ${errors.course_title ? 'error' : ''}`} />
           </div>
-          {errors.course_title && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle size={11}/>{errors.course_title}</p>}
+          {errors.course_title && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle size={11} />{errors.course_title}</p>}
         </div>
 
         {/* Description */}
@@ -110,7 +120,7 @@ export default function CreateCourse() {
             <AlignLeft size={15} className="absolute left-3.5 top-3.5 text-[#9090b8]" />
             <textarea value={form.description} onChange={e => set('description', e.target.value)}
               placeholder="Describe what students will learn..." rows={4}
-              className="input-field pl-10 resize-none" style={{paddingTop:'12px'}} />
+              className="input-field pl-10 resize-none" style={{ paddingTop: '12px' }} />
           </div>
         </div>
 
@@ -126,13 +136,18 @@ export default function CreateCourse() {
             {errors.duration && <p className="text-xs text-rose-400 mt-1.5">{errors.duration}</p>}
           </div>
 
-          {/* Category */}
+          {/* Category dropdown — real names! */}
           <div>
-            <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Category ID</label>
+            <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Category</label>
             <div className="relative">
               <Tag size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9090b8]" />
-              <input type="number" min="1" value={form.category_id} onChange={e => set('category_id', e.target.value)}
-                placeholder="e.g. 1" className="input-field pl-10" />
+              <select value={form.category_id} onChange={e => set('category_id', e.target.value)}
+                className="input-field pl-10" style={{ appearance: 'none' }}>
+                <option value="">Select category...</option>
+                {categories.map(c => (
+                  <option key={c.category_id} value={c.category_id}>{c.category_name}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -150,17 +165,6 @@ export default function CreateCourse() {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Instructor ID */}
-        <div>
-          <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Instructor ID</label>
-          <div className="relative">
-            <Layers size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9090b8]" />
-            <input type="number" min="1" value={form.instructor_id} onChange={e => set('instructor_id', e.target.value)}
-              placeholder="e.g. 1" className="input-field pl-10" />
-          </div>
-          <p className="text-xs text-[#9090b8] mt-1.5">Optional. Link to an instructor record in the database.</p>
         </div>
 
         {/* Submit */}

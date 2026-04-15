@@ -1,29 +1,37 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
+import axios from 'axios';
 import api from '../api';
 
 const AuthContext = createContext(null);
 
+// Raw axios instance for login — bypasses the JSON Content-Type interceptor
+const rawAxios = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+});
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('sb_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('sb_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
   });
-  const [loading, setLoading] = useState(false);
 
   const login = async (email, password) => {
-    // Backend expects form data for login
-    const formData = new URLSearchParams();
-    formData.append('username', email);
-    formData.append('password', password);
+    // FastAPI OAuth2PasswordRequestForm requires application/x-www-form-urlencoded
+    // We use rawAxios to avoid the interceptor overriding Content-Type to JSON
+    const params = new URLSearchParams();
+    params.append('username', email);
+    params.append('password', password);
 
-    const res = await api.post('/auth/login', formData.toString(), {
+    const res = await rawAxios.post('/auth/login', params, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
     const { access_token } = res.data;
     localStorage.setItem('sb_token', access_token);
 
-    // Fetch user profile
-    const userRes = await api.get('/users/me', {
+    // Fetch user profile using the authenticated api instance
+    const userRes = await rawAxios.get('/users/me', {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     const userData = userRes.data;
@@ -43,7 +51,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
