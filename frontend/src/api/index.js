@@ -1,11 +1,12 @@
 import axios from 'axios';
 
+// baseURL detection for local dev vs production (Vercel)
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach JWT token to every request
+// Attach JWT token to every request from localStorage
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('sb_token');
   if (token) {
@@ -14,14 +15,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// On 401, clear storage and redirect to login
+// Auto-handle 401 Unauthorized (invalid/expired tokens)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('sb_token');
       localStorage.removeItem('sb_user');
-      window.location.href = '/login';
+      // Only redirect if not already on public pages to avoid loops
+      if (!['/login', '/register', '/'].includes(window.location.pathname)) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

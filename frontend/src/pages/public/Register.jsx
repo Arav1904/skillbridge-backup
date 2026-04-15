@@ -35,14 +35,20 @@ export default function Register() {
 
   const validate = () => {
     const e = {};
+    const emailTrimmed = form.email.trim();
+    
     if (!form.name.trim()) e.name = 'Full name is required';
     else if (form.name.trim().length < 2) e.name = 'Name must be at least 2 characters';
-    if (!form.email) e.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email address';
+    
+    if (!emailTrimmed) e.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) e.email = 'Enter a valid email address';
+    
     if (!form.password) e.password = 'Password is required';
     else if (form.password.length < 6) e.password = 'Password must be at least 6 characters';
+    
     if (!form.confirm) e.confirm = 'Please confirm your password';
     else if (form.password !== form.confirm) e.confirm = 'Passwords do not match';
+    
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -52,12 +58,12 @@ export default function Register() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await register(form.name, form.email, form.password);
+      await register(form.name.trim(), form.email.trim(), form.password);
       setSuccess(true);
       toast('Account created! Redirecting to login...', 'success');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Registration failed. Try a different email.';
+      const msg = err.response?.data?.detail || 'Registration failed. This email might already be in use.';
       setErrors({ api: msg });
       toast(msg, 'error');
     } finally {
@@ -69,85 +75,87 @@ export default function Register() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center animate-fade-up">
-          <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6" style={{animation:'bounceIn 0.6s ease forwards'}}>
+          <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6">
             <CheckCircle size={40} className="text-emerald-400" />
           </div>
-          <h2 className="text-3xl font-display font-bold text-white mb-2">You're in!</h2>
-          <p className="text-[#9090b8]">Account created successfully. Taking you to login...</p>
+          <h2 className="text-3xl font-display font-bold text-white mb-2">Account Created!</h2>
+          <p className="text-[#9090b8]">Welcome to SkillBridge 2026. Taking you to sign in...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-10 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 pt-24 pb-12 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="orb w-96 h-96 bg-emerald-600 -top-20 -right-20 opacity-10" />
-        <div className="orb w-96 h-96 bg-violet-600 -bottom-20 -left-20 opacity-10" />
+        <div className="orb w-96 h-96 bg-amber-500/10 -top-20 -right-20 blur-3xl" />
+        <div className="orb w-96 h-96 bg-violet-600/10 -bottom-20 -left-20 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-[440px] animate-fade-up">
+        {/* Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-[0_0_30px_rgba(251,191,36,0.3)] group-hover:shadow-[0_0_40px_rgba(251,191,36,0.5)] transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <GraduationCap size={20} className="text-[#06061a]" />
             </div>
             <span className="font-display font-bold text-xl text-white">Skill<span className="text-gradient-gold">Bridge</span></span>
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">Start for free</h1>
-          <p className="text-[#9090b8] text-sm">Join 12,000+ learners already growing their skills</p>
+          <h1 className="text-3xl font-display font-bold text-white mb-2">Create Account</h1>
+          <p className="text-[#9090b8] text-sm md:text-base">Join the future of learning in 2026.</p>
         </div>
 
-        <div className="glass rounded-3xl p-8 border border-white/[0.07] shadow-[0_24px_80px_rgba(0,0,0,0.5)]">
+        {/* Card */}
+        <div className="glass rounded-3xl p-8 border border-white/[0.08] shadow-2xl">
           {errors.api && (
-            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 mb-5 animate-fade-up">
-              <AlertCircle size={16} className="text-rose-400 flex-shrink-0" />
-              <span className="text-sm text-rose-300">{errors.api}</span>
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 mb-6 animate-shake">
+              <AlertCircle size={18} className="text-rose-400 flex-shrink-0" />
+              <span className="text-sm text-rose-300 font-medium">{errors.api}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Full Name</label>
-              <div className="relative">
-                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9090b8]" />
+              <label className="block text-[10px] font-bold text-[#9090b8] uppercase tracking-widest mb-2 px-1">Full Name</label>
+              <div className="relative group">
+                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9090b8] group-focus-within:text-amber-400 transition-colors" />
                 <input type="text" value={form.name}
                   onChange={e => { setForm(p => ({...p, name: e.target.value})); setErrors(p => ({...p, name: ''})); }}
-                  placeholder="Alex Johnson" className={`input-field pl-10 ${errors.name ? 'error' : ''}`} />
+                  placeholder="John Doe" className={`input-field pl-12 ${errors.name ? 'border-rose-500/50 bg-rose-500/5' : ''}`} />
               </div>
-              {errors.name && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle size={11} />{errors.name}</p>}
+              {errors.name && <p className="text-[10px] font-bold text-rose-400 mt-2 px-1 uppercase tracking-tighter">{errors.name}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Email Address</label>
-              <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9090b8]" />
+              <label className="block text-[10px] font-bold text-[#9090b8] uppercase tracking-widest mb-2 px-1">Email Address</label>
+              <div className="relative group">
+                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9090b8] group-focus-within:text-amber-400 transition-colors" />
                 <input type="email" value={form.email}
                   onChange={e => { setForm(p => ({...p, email: e.target.value})); setErrors(p => ({...p, email: ''})); }}
-                  placeholder="you@example.com" className={`input-field pl-10 ${errors.email ? 'error' : ''}`} />
+                  placeholder="name@email.com" className={`input-field pl-12 ${errors.email ? 'border-rose-500/50 bg-rose-500/5' : ''}`} />
               </div>
-              {errors.email && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle size={11} />{errors.email}</p>}
+              {errors.email && <p className="text-[10px] font-bold text-rose-400 mt-2 px-1 uppercase tracking-tighter">{errors.email}</p>}
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Password</label>
-              <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9090b8]" />
+              <label className="block text-[10px] font-bold text-[#9090b8] uppercase tracking-widest mb-2 px-1">Password</label>
+              <div className="relative group">
+                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9090b8] group-focus-within:text-amber-400 transition-colors" />
                 <input type={showPass ? 'text' : 'password'} value={form.password}
                   onChange={e => { setForm(p => ({...p, password: e.target.value})); setErrors(p => ({...p, password: ''})); }}
-                  placeholder="Min. 6 characters" className={`input-field pl-10 pr-10 ${errors.password ? 'error' : ''}`} />
-                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9090b8] hover:text-white transition-colors">
+                  placeholder="••••••••" className={`input-field pl-12 pr-12 ${errors.password ? 'border-rose-500/50 bg-rose-500/5' : ''}`} />
+                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9090b8] hover:text-white transition-colors">
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
               {form.password.length > 0 && strength >= 0 && (
-                <div className="mt-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-[#9090b8]">Strength</span>
-                    <span className={`text-xs font-semibold ${['text-rose-400','text-amber-400','text-blue-400','text-emerald-400'][strength]}`}>
+                <div className="mt-3 px-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold text-[#9090b8] uppercase">Security Strength</span>
+                    <span className={`text-[10px] font-bold uppercase ${['text-rose-400','text-amber-400','text-blue-400','text-emerald-400'][strength]}`}>
                       {strengthLevels[strength].label}
                     </span>
                   </div>
@@ -157,40 +165,34 @@ export default function Register() {
                   </div>
                 </div>
               )}
-              {errors.password && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle size={11} />{errors.password}</p>}
+              {errors.password && <p className="text-[10px] font-bold text-rose-400 mt-2 px-1 uppercase tracking-tighter">{errors.password}</p>}
             </div>
 
             {/* Confirm */}
             <div>
-              <label className="block text-xs font-semibold text-[#9090b8] uppercase tracking-wider mb-2">Confirm Password</label>
-              <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9090b8]" />
+              <label className="block text-[10px] font-bold text-[#9090b8] uppercase tracking-widest mb-2 px-1">Confirm Identity</label>
+              <div className="relative group">
+                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9090b8] group-focus-within:text-amber-400 transition-colors" />
                 <input type="password" value={form.confirm}
                   onChange={e => { setForm(p => ({...p, confirm: e.target.value})); setErrors(p => ({...p, confirm: ''})); }}
-                  placeholder="Repeat password" className={`input-field pl-10 ${errors.confirm ? 'error' : form.confirm && form.confirm === form.password ? 'border-emerald-500/40' : ''}`} />
-                {form.confirm && form.confirm === form.password && (
-                  <CheckCircle size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-400" />
-                )}
+                  placeholder="Repeat password" className="input-field pl-12" />
               </div>
-              {errors.confirm && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle size={11} />{errors.confirm}</p>}
+              {errors.confirm && <p className="text-[10px] font-bold text-rose-400 mt-2 px-1 uppercase tracking-tighter">{errors.confirm}</p>}
             </div>
 
-            <div className="pt-1">
-              <p className="text-xs text-[#9090b8] mb-4">You'll be registered as a <span className="text-amber-400 font-semibold">Student</span>. Instructors are added by admin.</p>
-              <button type="submit" disabled={loading}
-                className="btn-gold w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
-                {loading ? <LoadingSpinner size="sm" /> : <>
-                  <span>Create My Account</span>
-                  <ArrowRight size={16} className="relative z-10" />
-                </>}
-              </button>
-            </div>
+            <button type="submit" disabled={loading}
+              className="btn-gold w-full py-4 rounded-2xl font-bold text-sm mt-4 flex items-center justify-center gap-3 shadow-lg shadow-amber-500/10 disabled:opacity-50">
+              {loading ? <LoadingSpinner size="sm" /> : <>
+                <span>Create My Account</span>
+                <ArrowRight size={18} />
+              </>}
+            </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-white/[0.06] text-center">
+          <div className="mt-8 pt-6 border-t border-white/10 text-center">
             <p className="text-sm text-[#9090b8]">
-              Already have an account?{' '}
-              <Link to="/login" className="text-amber-400 hover:text-amber-300 font-semibold transition-colors">Sign in</Link>
+              Ready to learn?{' '}
+              <Link to="/login" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">Sign in here</Link>
             </p>
           </div>
         </div>

@@ -11,23 +11,23 @@ const stats = [
   { label: 'Course Completion Rate', value: '94%', icon: TrendingUp, color: 'text-rose-400' },
 ];
 
-const features = [
+const featuredUSPs = [
   { icon: Zap, title: 'AI-Powered Learning Paths', desc: 'Our platform analyzes your progress and adapts course recommendations in real time — your personal academic guide.', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20' },
   { icon: Shield, title: 'Verified Certificates', desc: 'Every certificate is blockchain-timestamped and shareable directly to LinkedIn. Employers can verify instantly.', color: 'text-emerald-400', bg: 'bg-emerald-400/10 border-emerald-400/20' },
   { icon: Globe, title: 'Live Cohort Sessions', desc: 'Join weekly live sessions with instructors and peers. Collaborative learning beats solo study every time.', color: 'text-violet-400', bg: 'bg-violet-400/10 border-violet-400/20' },
   { icon: Brain, title: 'Smart Assignment Review', desc: 'Instructors use AI-assisted grading tools so feedback reaches you within hours, not weeks.', color: 'text-rose-400', bg: 'bg-rose-400/10 border-rose-400/20' },
 ];
 
-const categories = [
+const staticCategories = [
   { name: 'Development', icon: Code, count: 87, color: 'from-blue-600 to-violet-600' },
   { name: 'Design', icon: Palette, count: 54, color: 'from-rose-500 to-pink-600' },
   { name: 'Business', icon: BarChart3, count: 63, color: 'from-amber-500 to-orange-600' },
   { name: 'AI & Data', icon: Brain, count: 48, color: 'from-emerald-500 to-teal-600' },
 ];
 
-const testimonials = [
+const testimonialsList = [
   { name: 'Priya Sharma', role: 'Software Engineer @ Google', text: 'SkillBridge helped me land my dream job. The structured curriculum and live feedback were game-changers.', avatar: 'PS', rating: 5, color: 'from-violet-500 to-blue-500' },
-  { name: 'Rahul Mehta', role: 'UX Designer @ Razorpay', text: 'I enrolled in the design track and within 3 months had a portfolio good enough to get hired. Worth every second.', avatar: 'RM', rating: 5, color: 'from-rose-500 to-pink-500' },
+  { name: 'Rahul Ghiya', role: 'Student @ Somaiya', text: 'I enrolled in the design track and within 3 months had a portfolio good enough to get hired. Worth every second.', avatar: 'RG', rating: 5, color: 'from-rose-500 to-pink-500' },
   { name: 'Ananya Iyer', role: 'Data Analyst @ Flipkart', text: 'The AI & Data courses are incredibly up-to-date. My instructor responded to every assignment within 24 hours.', avatar: 'AI', rating: 5, color: 'from-amber-500 to-orange-500' },
 ];
 
@@ -57,12 +57,9 @@ export default function Landing() {
 
       {/* ── HERO ── */}
       <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-        {/* Background orbs */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="orb w-[600px] h-[600px] bg-violet-600 -top-32 -left-48 animate-pulse-slow" />
           <div className="orb w-[500px] h-[500px] bg-amber-500 -bottom-20 -right-32 animate-pulse-slow" style={{animationDelay:'2s'}} />
-          <div className="orb w-[300px] h-[300px] bg-emerald-600 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse-slow" style={{animationDelay:'1s'}} />
-          {/* Grid pattern */}
           <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
             backgroundSize: '60px 60px'
@@ -72,20 +69,20 @@ export default function Landing() {
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-gold mb-8 text-amber-300 text-sm font-medium animate-fade-up">
             <Zap size={14} className="text-amber-400" />
-            India's most modern learning platform · Est. 2024
+            India's most modern learning platform · Est. 2026
             <span className="ml-1 badge badge-gold">NEW</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold text-white leading-[1.05] mb-6 animate-fade-up delay-100" style={{opacity:0}}>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold text-white leading-[1.05] mb-6 animate-fade-up delay-100" style={{opacity:1}}>
             Find Your<br />
             <span className="text-gradient-gold italic">Next Skill.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-[#9090b8] max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-200" style={{opacity:0}}>
+          <p className="text-lg md:text-xl text-[#9090b8] max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-200" style={{opacity:1}}>
             Premium courses built by industry experts. Learn at your pace, earn verified certificates, and unlock the career you've been working towards.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-up delay-300" style={{opacity:0}}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-up delay-300" style={{opacity:1}}>
             <Link to="/register" className="btn-gold px-8 py-4 rounded-2xl text-base font-semibold flex items-center gap-2 group">
               <span>Start Learning Free</span>
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform relative z-10" />
@@ -98,8 +95,7 @@ export default function Landing() {
             </Link>
           </div>
 
-          {/* Stats row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto animate-fade-up delay-400" style={{opacity:0}}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto animate-fade-up delay-400" style={{opacity:1}}>
             {stats.map(({ label, value, icon: Icon, color }) => (
               <div key={label} className="glass rounded-2xl p-4 text-center">
                 <Icon size={20} className={`${color} mx-auto mb-2`} />
@@ -110,7 +106,6 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#9090b8] text-xs animate-bounce">
           <span>Scroll to explore</span>
           <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1">
@@ -129,8 +124,8 @@ export default function Landing() {
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {categories.map(({ name, icon: Icon, count, color }, i) => (
-              <Link to="/courses" key={name} className="glass glass-hover rounded-2xl p-6 text-center group cursor-pointer border border-white/[0.06]"
+            {staticCategories.map(({ name, icon: Icon, count, color }, i) => (
+              <Link to="/courses" key={name} className="glass glass-hover rounded-2xl p-6 text-center group border border-white/[0.06]"
                 style={{ transitionDelay: `${i * 60}ms` }}>
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                   <Icon size={26} className="text-white" />
@@ -163,7 +158,7 @@ export default function Landing() {
           {courses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.slice(0, 6).map((course, i) => (
-                <div key={course.course_id} className="animate-fade-up opacity-0" style={{animationDelay:`${i*80}ms`,animationFillMode:'forwards'}}>
+                <div key={course.course_id} className="animate-fade-up" style={{animationDelay:`${i*80}ms`}}>
                   <CourseCard course={course} index={i} />
                 </div>
               ))}
@@ -175,15 +170,10 @@ export default function Landing() {
               ))}
             </div>
           )}
-          <div className="text-center mt-10">
-            <Link to="/courses" className="btn-ghost px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
-              Explore All Courses <ArrowRight size={16} />
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* ── FEATURES / USPs ── */}
+      {/* ── FEATURES ── */}
       <section id="features" ref={setRef('features')} className="py-24 px-6">
         <div className={`max-w-6xl mx-auto transition-all duration-700 ${visibleSections.features ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="text-center mb-16">
@@ -191,17 +181,16 @@ export default function Landing() {
             <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
               Built Different. <span className="text-gradient-emerald">By Design.</span>
             </h2>
-            <p className="text-[#9090b8] max-w-xl mx-auto">Features that no other Indian ed-tech platform has put together under one roof.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.map(({ icon: Icon, title, desc, color, bg }, i) => (
+            {featuredUSPs.map(({ icon: Icon, title, desc, color, bg }, i) => (
               <div key={title} className={`glass glass-hover rounded-2xl p-7 border ${bg} flex gap-5`} style={{transitionDelay:`${i*80}ms`}}>
                 <div className={`w-12 h-12 rounded-2xl ${bg} flex items-center justify-center flex-shrink-0 border`}>
                   <Icon size={22} className={color} />
                 </div>
                 <div>
                   <h3 className="font-display font-semibold text-white text-lg mb-2">{title}</h3>
-                  <p className="text-sm text-[#9090b8] leading-relaxed">{desc}</p>
+                  <p className="text-sm text-[#9090b8]">{desc}</p>
                 </div>
               </div>
             ))}
@@ -219,12 +208,12 @@ export default function Landing() {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map(({ name, role, text, avatar, rating, color }, i) => (
+            {testimonialsList.map(({ name, role, text, avatar, rating, color }, i) => (
               <div key={name} className="card p-6 flex flex-col gap-4" style={{transitionDelay:`${i*80}ms`}}>
                 <div className="flex gap-1">
                   {[...Array(rating)].map((_, j) => <Star key={j} size={14} className="text-amber-400" fill="currentColor" />)}
                 </div>
-                <p className="text-sm text-[#9090b8] leading-relaxed flex-1 italic">"{text}"</p>
+                <p className="text-sm text-[#9090b8] flex-1 italic">"{text}"</p>
                 <div className="flex items-center gap-3 pt-3 border-t border-white/[0.05]">
                   <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-white text-xs font-bold`}>
                     {avatar}
@@ -240,34 +229,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── CTA BANNER ── */}
-      <section id="cta" ref={setRef('cta')} className="py-24 px-6">
-        <div className={`max-w-4xl mx-auto transition-all duration-700 ${visibleSections.cta ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-          <div className="relative glass-gold rounded-3xl p-12 text-center overflow-hidden">
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="orb w-64 h-64 bg-amber-400 -top-16 -left-16 opacity-10" />
-              <div className="orb w-64 h-64 bg-amber-400 -bottom-16 -right-16 opacity-10" />
-            </div>
-            <span className="badge badge-gold mb-6">Limited Offer</span>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4 relative z-10">
-              Ready to <span className="text-gradient-gold">level up?</span>
-            </h2>
-            <p className="text-[#9090b8] text-lg max-w-xl mx-auto mb-8 relative z-10">
-              Join 12,000+ students already building the skills that matter. First month is free.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-              <Link to="/register" className="btn-gold px-8 py-4 rounded-2xl font-semibold text-base flex items-center gap-2 group">
-                <span>Create Free Account</span>
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform relative z-10" />
-              </Link>
-              <div className="flex items-center gap-2 text-sm text-[#9090b8]">
-                <CheckCircle size={16} className="text-emerald-400" /> No credit card needed
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ── FOOTER ── */}
       <footer className="border-t border-white/[0.05] py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
@@ -277,13 +238,12 @@ export default function Landing() {
             </div>
             <span className="font-display font-bold text-white">Skill<span className="text-gradient-gold">Bridge</span></span>
           </div>
-          <p className="text-sm text-[#9090b8] text-center">
-            © 2024 SkillBridge · DBMS Lab Project · Built with ❤️ for education
+          <p className="text-sm text-[#9090b8]">
+            © 2026 SkillBridge · DBMS Lab Project · Built by Arav Ghiya
           </p>
           <div className="flex items-center gap-4 text-sm text-[#9090b8]">
-            <Link to="/login" className="hover:text-white transition-colors">Sign In</Link>
-            <Link to="/register" className="hover:text-white transition-colors">Register</Link>
-            <Link to="/courses" className="hover:text-white transition-colors">Courses</Link>
+            <Link to="/login" className="hover:text-amber-400 transition-colors">Sign In</Link>
+            <Link to="/register" className="hover:text-emerald-400 transition-colors">Register</Link>
           </div>
         </div>
       </footer>
