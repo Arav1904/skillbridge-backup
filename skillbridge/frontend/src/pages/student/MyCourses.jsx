@@ -1,15 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, PlayCircle, Clock, ArrowRight, PlusCircle, CheckCircle } from 'lucide-react';
+import { BookOpen, PlayCircle, Clock, ArrowRight, PlusCircle, CheckCircle, Trash2 } from 'lucide-react';
 import api from '../../api';
 import { PageLoader } from '../../components/LoadingSpinner';
 import { useToast } from '../../components/Toast';
+import { useAuth } from '../../context/AuthContext';
 
 export default function MyCourses() {
+  const { user } = useAuth();
   const [enrollments, setEnrollments] = useState([]);
   const [courses, setCourses] = useState({});
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  const handleUnenroll = async (courseId) => {
+    if (!window.confirm('Are you sure you want to unenroll from this course?')) return;
+    try {
+      await api.delete(`/enrollments/${user.user_id}/${courseId}`);
+      setEnrollments(prev => prev.filter(e => e.course_id !== courseId));
+      toast('Unenrolled successfully', 'success');
+    } catch (e) {
+      console.error(e);
+      toast('Failed to unenroll', 'error');
+    }
+  };
 
   useEffect(() => {
     Promise.all([api.get('/enrollments/me'), api.get('/courses/?limit=100')])
@@ -84,12 +98,17 @@ export default function MyCourses() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-white/[0.05]">
+                <div className="mt-4 pt-4 border-t border-white/[0.05] flex gap-2">
                   <Link to={`/student/course/${enr.course_id}`}
-                    className="btn-gold w-full py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
+                    className="btn-gold flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
                     <PlayCircle size={14}/>
                     {prog > 0 ? 'Continue Learning' : 'Start Course'}
                   </Link>
+                  <button onClick={() => handleUnenroll(enr.course_id)}
+                    className="px-3 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all"
+                    title="Unenroll">
+                    <Trash2 size={14}/> Unenroll
+                  </button>
                 </div>
               </div>
             );

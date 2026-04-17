@@ -4,9 +4,11 @@ import { ArrowLeft, PlayCircle, Clock, CheckCircle, BookOpen, ChevronRight, Lock
 import api from '../../api';
 import { PageLoader } from '../../components/LoadingSpinner';
 import { useToast } from '../../components/Toast';
+import { useAuth } from '../../context/AuthContext';
 
 export default function CourseViewer() {
   const { courseId } = useParams();
+  const { user } = useAuth();
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [active, setActive] = useState(null);
@@ -17,15 +19,24 @@ export default function CourseViewer() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [courseRes, lessonsRes] = await Promise.all([
+        const [courseRes, lessonsRes, enrollRes] = await Promise.all([
           api.get(`/courses/${courseId}`),
           api.get('/lessons/?limit=100'),
+          api.get('/enrollments/me'),
         ]);
         setCourse(courseRes.data);
         // Filter lessons for this course
         const filtered = (lessonsRes.data || []).filter(l => l.course_id === parseInt(courseId));
         setLessons(filtered);
         if (filtered.length > 0) setActive(filtered[0]);
+
+        // Restore saved progress: figure out how many lessons were done
+        const enrollment = (enrollRes.data || []).find(e => e.course_id === parseInt(courseId));
+        if (enrollment && enrollment.progress > 0 && filtered.length > 0) {
+          const completedCount = Math.round((enrollment.progress / 100) * filtered.length);
+          const restoredDone = new Set(filtered.slice(0, completedCount).map(l => l.lesson_id));
+          setDone(restoredDone);
+        }
       } catch (e) {
         console.error(e);
         toast('Failed to load course content', 'error');
@@ -36,12 +47,23 @@ export default function CourseViewer() {
     load();
   }, [courseId]);
 
-  const markDone = (id) => {
-    setDone(prev => new Set([...prev, id]));
+  const markDone = async (id) => {
+    const newDone = new Set([...done, id]);
+    setDone(newDone);
     toast('Lesson completed! ✓', 'success');
     // Auto-advance to next lesson
     const idx = lessons.findIndex(l => l.lesson_id === id);
     if (idx < lessons.length - 1) setActive(lessons[idx + 1]);
+
+    // Persist progress to backend
+    if (user && lessons.length > 0) {
+      const newProgress = Math.round((newDone.size / lessons.length) * 100);
+      try {
+        await api.put(`/enrollments/${user.user_id}/${courseId}`, { progress: newProgress });
+      } catch (e) {
+        console.error('Failed to save progress:', e);
+      }
+    }
   };
 
   if (loading) return <PageLoader message="Loading course content..." />;
