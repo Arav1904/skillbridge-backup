@@ -209,6 +209,27 @@ def seed():
         db.commit()
         print("  ✅ Certificates (10 rows)")
 
+    # Reset all auto-increment sequences so new inserts start at 11+
+    sequences = [
+        ("users",        "user_id"),
+        ("roles",        "role_id"),
+        ("categories",   "category_id"),
+        ("instructors",  "instructor_id"),
+        ("courses",      "course_id"),
+        ("lessons",      "lesson_id"),
+        ("assignments",  "assignment_id"),
+        ("submissions",  "submission_id"),
+        ("certificates", "certificate_id"),
+        ("enrollment",   "enrollment_id"),
+    ]
+    for table, col in sequences:
+        try:
+            db.execute(text(f"SELECT setval(pg_get_serial_sequence('{table}', '{col}'), (SELECT COALESCE(MAX({col}), 0) FROM {table}) + 1, false)"))
+        except Exception:
+            pass  # skip if table has no sequence (e.g. composite PK)
+    db.commit()
+    print("  ✅ Auto-increment sequences reset")
+
     print("=" * 40)
     print("✅  Done!\n")
     print("Login credentials:")
