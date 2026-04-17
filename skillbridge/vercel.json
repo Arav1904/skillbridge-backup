@@ -1,7 +1,0 @@
-{
-  "buildCommand": "cd skillbridge/frontend && npm install && npm run build",
-  "outputDirectory": "skillbridge/frontend/dist",
-  "installCommand": "echo skip",
-  "framework": null,
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
